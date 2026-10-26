@@ -212,7 +212,8 @@ function powerOut(){S.out=1;S.gold=0;S.outT=9;S.dL=S.dR=S.lL=S.lR=S.cam=0;S.pw=0
 function tick(){
  if(!S||!S.run)return;
  S.t++;if(hr()>=6){win();return}
- var n=S.n,i=n-1,p=S.p,tm=S.tm;\n if(S.noticeT>0){S.noticeT--;if(S.noticeT===0)S.notice="SYSTEM READY — listen for movement."}
+ var n=S.n,i=n-1,p=S.p,tm=S.tm;
+ if(S.noticeT>0){S.noticeT--;if(S.noticeT===0)S.notice="SYSTEM READY — listen for movement."}
  if(S.out){S.outT--;if(S.outT<=0){scare("freddy");return}render();return}
  S.pw-=usage()*0.1*(1+i*.12);
  if(S.pw<=0){powerOut();return}
@@ -246,7 +247,8 @@ function render(){
  var h=hr();$("tm").textContent=(h==0?12:h)+" AM";
  $("pw").textContent=Math.max(0,Math.ceil(S.pw));$("bf").style.width=Math.max(0,S.pw)+"%";$("bf").style.background=S.pw>40?"#5bd68a":S.pw>15?"#e0b43a":"#d6372b";
  $("gold").innerHTML=S.gold?face("golden",130)+'<div class="note" style="color:#e8b923;font-size:16px">'+"IT'S ME"+'</div>':"";
- $("us").textContent=S.out?"":"|".repeat(usage());\n var alertBox=$("alert");if(alertBox){alertBox.textContent=S.out?"POWER FAILURE — listen for the backup system.":S.notice;alertBox.className=S.noticeT>0?(S.notice.indexOf("DOOR")>=0||S.notice.indexOf("imminent")>=0||S.notice.indexOf("CLOSE")>=0?"danger":"warn"):"";}
+ $("us").textContent=S.out?"":"|".repeat(usage());
+ var alertBox=$("alert");if(alertBox){alertBox.textContent=S.out?"POWER FAILURE — listen for the backup system.":S.notice;alertBox.className=S.noticeT>0?(S.notice.indexOf("DOOR")>=0||S.notice.indexOf("imminent")>=0||S.notice.indexOf("CLOSE")>=0?"danger":"warn"):"";}
  var p=S.p;
  $("dL").className="dw"+(S.dL?" shut":"")+(S.lL?" lit":"");
  $("dR").className="dw"+(S.dR?" shut":"")+(S.lR?" lit":"");
