@@ -185,7 +185,7 @@ function home(){
 }
 function start(n){
  ac();
- S={n:n,t:0,pw:100,lure:0,lr:0,lcd:0,gold:0,gw:0,gt:0,gcd:0,seen:{},dL:0,dR:0,lL:0,lR:0,cam:0,sel:1,p:{bonnie:0,chica:0,freddy:0,foxy:0},tm:{bonnie:0,chica:0,freddy:0,foxy:0},fr:0,hits:0,out:0,outT:0,notice:"SYSTEM READY — listen for movement.",noticeT:0,run:1};
+ S={n:n,t:0,pw:100,lure:0,lr:0,lcd:0,gold:0,gw:0,gt:0,gcd:0,seen:{},dL:0,dR:0,lL:0,lR:0,cam:0,sel:1,p:{bonnie:0,chica:0,freddy:0,foxy:0},tm:{bonnie:0,chica:0,freddy:0,foxy:0},fr:0,hits:0,out:0,outT:0,notice:"SYSTEM READY — listen for movement.",noticeT:0,pw25:0,pw10:0,warned:{},run:1};
  menu('<h2>Night '+n+'</h2><p>12:00 AM</p>');S.run=0;setTimeout(function(){if(S&&S.n==n){$("menu").style.display="none";S.run=1}},1800);$("scare").className="";$("pst").innerHTML=["bonnie","chica","freddy","foxy","golden"].map(function(n){return face(n,34)}).join("");$("nt").textContent="Night "+n;buildCams();render();
 }
 function buildCams(){var h="";[1,4,5,6,2,0,3,7].forEach(function(i){h+=i?'<button data-c="'+i+'" onclick="pick('+i+')">'+i+' '+CAMS[i]+'<span class="dots" id="d'+i+'"></span></button>':'<div class="you">YOU</div>'});$("cb").innerHTML=h}
@@ -217,6 +217,8 @@ function tick(){
  if(S.out){S.outT--;if(S.outT<=0){scare("freddy");return}render();return}
  S.pw-=usage()*0.1*(1+i*.12);
  if(S.pw<=0){powerOut();return}
+ if(S.pw<=10&&!S.pw10){S.pw10=1;S.notice="CRITICAL POWER: 10% remaining. Shut down unused systems.";S.noticeT=5;beep(520,.32,"sine",.07)}
+ else if(S.pw<=25&&!S.pw25){S.pw25=1;S.notice="LOW POWER: 25% remaining. Limit camera and door use.";S.noticeT=5;beep(360,.22,"triangle",.05)}
  if(S.lure>0)S.lure--;if(S.lcd>0)S.lcd--;
  if(S.gcd>0)S.gcd--;
  if(S.gold){if(!S.cam){S.gt--;if(S.gt<=0){scare("golden");return}}}
@@ -226,9 +228,9 @@ function tick(){
  function roll(a){return act&&Math.random()*25<AI[a][i]}
  ["bonnie","chica","freddy"].forEach(function(a){
   var d=a=="bonnie"?"dL":"dR";
-  if(p[a]==2){tm[a]--;if(tm[a]<=0){if(S[d]){p[a]=a=="freddy"?0:1;tm[a]=0;beep(70,.2,"square",.1)}else{scare(a)}}return}
+  if(p[a]==2){tm[a]--;if(tm[a]==2&&!S[d]&&!S.warned[a]){S.warned[a]=1;S.notice=(a=="bonnie"?"WEST DOOR: impact imminent.":a=="chica"?"EAST DOOR: impact imminent.":"FREDDY: attack imminent.");S.noticeT=2;beep(a=="freddy"?95:145,.22,"square",.055)}if(tm[a]<=0){if(S[d]){p[a]=a=="freddy"?0:1;tm[a]=0;S.warned[a]=0;beep(70,.2,"square",.1)}else{scare(a)}}return}
   if(a=="freddy"&&S.cam&&S.sel==(p.freddy==0?1:3))return;
-  if(roll(a)&&!(S.lure>0&&p[a]==0)){p[a]++;S.notice=(a=="bonnie"?"WEST HALL: heavy footsteps.":a=="chica"?"EAST HALL: scraping metal.":"CAMERA FEED: low mechanical hum.");S.noticeT=4;beep(a=="bonnie"?180:a=="chica"?240:110,.16,"triangle",.035);if(p[a]==2){tm[a]=Math.max(3,8-n);S.notice=(a=="bonnie"?"WEST DOOR: something is waiting.":a=="chica"?"EAST DOOR: something is waiting.":"FREDDY IS CLOSE — check the east side.");S.noticeT=4}}
+  if(roll(a)&&!(S.lure>0&&p[a]==0)){p[a]++;S.notice=(a=="bonnie"?"WEST HALL: heavy footsteps.":a=="chica"?"EAST HALL: scraping metal.":"CAMERA FEED: low mechanical hum.");S.noticeT=4;beep(a=="bonnie"?180:a=="chica"?240:110,.16,"triangle",.035);if(p[a]==2){tm[a]=Math.max(3,8-n);S.warned[a]=0;S.notice=(a=="bonnie"?"WEST DOOR: something is waiting.":a=="chica"?"EAST DOOR: something is waiting.":"FREDDY IS CLOSE — check the east side.");S.noticeT=4}}
  });
  if(S.fr>0){S.fr--;if(S.fr==0){if(S.dL){S.hits++;S.pw=Math.max(1,S.pw-(2+S.hits*2));p.foxy=1;beep(60,.4,"square",.2);noise(.25)}else{scare("foxy");return}}}
  else if(p.foxy<3){if(!(S.cam&&S.sel==4)&&roll("foxy")){p.foxy++;S.notice=p.foxy==1?"PIRATE COVE: curtain moved.":p.foxy==2?"PIRATE COVE: movement detected.":"PIRATE COVE: sprint imminent.";S.noticeT=4;beep(320-p.foxy*45,.12,"sawtooth",.04);if(p.foxy==3)S.fr=6}}
@@ -277,6 +279,7 @@ $("blL").onclick=function(){tog("lL");if(S&&S.lL){S.lR=0;render()}};
 $("blR").onclick=function(){tog("lR");if(S&&S.lR){S.lL=0;render()}};
 $("bcam").onclick=camT;
 addEventListener("keydown",function(e){
+ if(e.repeat)return;
  var k=e.key.toLowerCase();
  if(k=="a")tog("dL");else if(k=="d")tog("dR");
  else if(k=="q"){tog("lL");if(S&&S.lL){S.lR=0;render()}}
