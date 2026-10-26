@@ -181,7 +181,7 @@ function noise(d){var a=ac();if(!a)return;var n=a.sampleRate*d,b=a.createBuffer(
 function menu(html){var m=$("menu");m.innerHTML=html;m.style.display="flex"}
 function home(){
  var nb="";for(var i=1;i<=5;i++)nb+='<button '+(i>best?"disabled":"")+' onclick="start('+i+')">Night '+i+'</button>';
- menu('<h2>Five Nights: Fan Edition</h2><div id="faces">'+["bonnie","chica","freddy","foxy","golden"].map(function(n){return face(n,76,1)}).join("")+'</div><p>You are the night guard. Four animatronics roam after midnight. Shut the doors when they show up, spend power carefully, and last until 6 AM.</p><div class="row">'+nb+'</div><div class="row"><button onclick="arc()">Arcade minigames</button></div><p class="keys">A / D doors, Q / E lights, Space cameras, 1-7 pick camera</p><p>Tip: Foxy advances when Pirate Cove is not watched. Freddy pauses when watched on the correct camera. If Golden Freddy appears in your office, raise the cameras. CAM 5 can reveal his warning. LURE (or L) costs 2% power and only redirects threats near the selected camera; it has a cooldown. Watch for movement alerts, then verify with cameras or door lights.</p>');
+ menu('<h2>Five Nights: Fan Edition</h2><div id="faces">'+["bonnie","chica","freddy","foxy","golden"].map(function(n){return face(n,76,1)}).join("")+'</div><p>You are the night guard. Four animatronics roam after midnight, and a fifth presence may appear. Shut doors only when needed, manage power, and survive until 6 AM.</p><div class="row">'+nb+'</div><div class="row"><button onclick="arc()">Arcade minigames</button></div><p class="keys">A / D doors, Q / E lights, Space cameras, 1-7 pick camera</p><p>Tip: Foxy advances when Pirate Cove is not watched. Freddy pauses when watched on the correct camera. If Golden Freddy appears in your office, raise the cameras. CAM 5 can reveal his warning. LURE (or L) costs 2% power and only redirects threats near the selected camera; it has a cooldown. Watch for movement alerts, then verify with cameras or door lights.</p>');
 }
 function start(n){
  ac();
@@ -204,10 +204,10 @@ function hr(){return Math.floor(S.t/40)}
 function hourStr(){var h=hr();return (h==0?12:h)+" AM"}
 function win(){
  S.run=0;beep(880,.6,"sine",.1);
- var grade=S.pw>=60&&S.hits===0?"S":S.pw>=40&&S.hits<=1?"A":S.pw>=20&&S.hits<=2?"B":S.pw>0?"C":"D";
+ var grade=S.pw>=60&&S.hits===0?"S":S.pw>=40&&S.hits<=1?"A":S.pw>=20&&S.hits<=2?"B":S.pw>=10?"C":"D";
  if(S.n>=best&&S.n<5){best=S.n+1;try{localStorage.setItem("fn_best",best)}catch(e){}}
  var last=S.n>=5;
- menu('<h2>6 AM</h2><p>'+(last?"You survived all five nights. The doors are open and the sun is up.":"Night "+S.n+" survived. Your shift is over.")+'</p><p><strong>Shift rating: '+grade+'</strong><br>Power remaining: '+Math.ceil(S.pw)+'%<br>Foxy impacts absorbed: '+S.hits+'</p><p class="note">S: efficient and clean · A: strong control · B: survived with room to improve · C: barely held on</p><div class="row">'+(last?'':'<button class="big" onclick="start('+(S.n+1)+')">Start night '+(S.n+1)+'</button>')+'<button onclick="home()">Main menu</button></div>');
+ menu('<h2>6 AM</h2><p>'+(last?"You survived all five nights. The doors are open and the sun is up.":"Night "+S.n+" survived. Your shift is over.")+'</p><p><strong>Shift rating: '+grade+'</strong><br>Power remaining: '+Math.ceil(S.pw)+'%<br>Foxy impacts absorbed: '+S.hits+'</p><p class="note">S: efficient and clean · A: strong control · B: room to improve · C: barely held on · D: critical power</p><div class="row">'+(last?'':'<button class="big" onclick="start('+(S.n+1)+')">Start night '+(S.n+1)+'</button>')+'<button onclick="home()">Main menu</button></div>');
 }
 function powerOut(){S.out=1;S.gold=0;S.outT=9;S.dL=S.dR=S.lL=S.lR=S.cam=0;S.pw=0;noise(.5);render()}
 function tick(){
