@@ -150,7 +150,7 @@ button:disabled{opacity:.35;cursor:not-allowed}
 <div id="hud"><span id="tm">12 AM</span><span id="nt">Night 1</span><span>Power <b id="pw">100</b>% <i id="bar"><u id="bf"></u></i><span id="us"></span></span></div>
 <div id="office">
  <div class="dw" id="dL"><div class="win" id="wL"></div><div class="steel"></div><div class="lbl">west door</div></div>
- <div id="desk"><div id="pst"></div><div id="fan"><i></i><i></i></div><h1>Night Guard Office</h1><p>Doors and lights drain power.<br>Watch the cameras. Survive until 6 AM.</p><div id="alert" aria-live="polite">SYSTEM READY — listen for movement.</div></div>
+ <div id="desk"><div id="pst"></div><div id="fan"><i></i><i></i></div><h1>Night Guard Office</h1><p>Every powered system drains power. Use movement alerts and camera sightings to time your response.</p><div id="alert" aria-live="polite">SYSTEM READY — listen for movement.</div></div>
  <div class="dw" id="dR"><div class="win" id="wR"></div><div class="steel"></div><div class="lbl">east door</div></div>
  <div id="gold"></div><div id="vg"></div><div id="cam"><div id="cv"><div id="st"></div><div id="cn"></div><canvas id="rc"></canvas><button id="bl" onclick="doLure()">LURE</button></div>
   <div id="cb"></div></div>
@@ -250,7 +250,7 @@ function render(){
  var h=hr();$("tm").textContent=(h==0?12:h)+" AM";
  $("pw").textContent=Math.max(0,Math.ceil(S.pw));$("bf").style.width=Math.max(0,S.pw)+"%";$("bf").style.background=S.pw>40?"#5bd68a":S.pw>15?"#e0b43a":"#d6372b";
  $("gold").innerHTML=S.gold?face("golden",130)+'<div class="note" style="color:#e8b923;font-size:16px">'+"IT'S ME"+'</div>':"";
- $("us").textContent=S.out?"":"|".repeat(usage());
+ $("us").textContent=S.out?"":"|".repeat(usage());$("us").title="Power draw: "+usage()+" units — base office plus each active door, light, or camera.";$("us").setAttribute("aria-label","Power draw "+usage()+" units");
  var alertBox=$("alert");if(alertBox){alertBox.textContent=S.out?"POWER FAILURE — listen for the backup system.":S.notice;alertBox.className=S.noticeT>0?(S.notice.indexOf("DOOR")>=0||S.notice.indexOf("imminent")>=0||S.notice.indexOf("CLOSE")>=0?"danger":"warn"):"";}
  var p=S.p;
  $("dL").className="dw"+(S.dL?" shut":"")+(S.lL?" lit":"");
