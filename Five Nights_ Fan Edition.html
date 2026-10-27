@@ -56,6 +56,19 @@ button:disabled{opacity:.35;cursor:not-allowed}
 #scare.show{display:flex}
 #scare .face{animation:zm .12s linear infinite alternate;transform-origin:center}
 @keyframes zm{from{transform:scale(1) translate(-6px,4px)}to{transform:scale(1.12) translate(8px,-6px)}}
+#scare.staff-pummel{flex-direction:column;gap:18px;padding:18px;box-sizing:border-box;overflow:hidden;background:radial-gradient(ellipse,#351010 0%,#090606 68%)}
+#scare.staff-pummel .pummel-title{font:bold clamp(22px,5vw,42px) monospace;color:#ff5b4d;text-align:center;text-shadow:0 0 18px #f00;animation:shakeTitle .09s infinite}
+#scare.staff-pummel .pummel-cast{display:flex;align-items:center;justify-content:center;gap:clamp(2px,2vw,18px);width:100%;flex-wrap:wrap}
+#scare.staff-pummel .wrap{padding-top:0;animation:staffBeat .22s infinite alternate;animation-delay:calc(var(--beat,0)*-.07s)}
+#scare.staff-pummel .wrap:nth-child(2n){animation-direction:alternate-reverse}
+#scare.staff-pummel .face{animation:staffLunge .18s infinite alternate!important}
+#scare.staff-pummel .wrap:nth-child(2n) .face{animation-delay:-.09s!important}
+#scare.staff-pummel .tag{color:#fff;text-shadow:0 0 8px #f22;font-weight:bold;font-size:clamp(10px,2vw,15px);text-align:center}
+#scare.staff-pummel .pummel-caption{font:13px monospace;color:#ddd;text-align:center;animation:bl .3s infinite}
+@keyframes staffLunge{from{transform:translate(-15px,5px) rotate(-12deg) scale(.92)}to{transform:translate(16px,-8px) rotate(13deg) scale(1.14)}}
+@keyframes staffBeat{from{transform:translateX(-8px)}to{transform:translateX(8px)}}
+@keyframes shakeTitle{from{transform:translateX(-3px)}to{transform:translateX(3px)}}
+
 #menu{position:absolute;inset:0;background:rgba(4,5,8,.96);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px}
 #menu h2{font-size:clamp(22px,6vw,44px);margin:0;color:#f0e4c4;letter-spacing:.03em}
 #menu p{margin:0;color:var(--dim);max-width:520px;line-height:1.55;font-size:14px}
@@ -311,7 +324,13 @@ function submitChicaEssay(){
  var names=["Mrs Walling","Golden Taylor","MR. Snowden","COach Slaughter","MRs. Jordan"];
  var verdict=result.score>=90?"The staff grudgingly approve.":result.score>=70?"Acceptable, but the red pen was busy.":result.score>=40?"The staff meeting about this essay lasted longer than your shift.":"The staff has declared a grammar emergency.";
  var issueHtml=result.issues.length?'<ol style="max-height:180px;overflow:auto;text-align:left;padding-left:24px">'+result.issues.map(function(issue){return "<li>"+issue.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")+"</li>"}).join("")+"</ol>":"<p>No grammar issues were detected by the basic checker.</p>";
- menu('<h2>ESSAY GRADED</h2><p>Presented to all five animatronics: '+names.join(", ")+'.</p><p style="font-size:clamp(24px,5vw,42px);color:'+(result.score>=70?'#8ff0b3':'#ff8e82')+'"><strong>'+result.score+'/100</strong></p><p>'+result.issues.length+' detected mistake(s) × 10 points deducted.</p><p>'+verdict+'</p><div style="max-width:720px;width:100%;text-align:left"><h3>Grammar feedback</h3>'+issueHtml+'</div><p>Night '+night+' ended. Academic consequences remain in effect.</p><div class="row"><button class="big" onclick="start('+night+')">Retry night '+night+'</button><button onclick="home()">Main menu</button></div>');
+ var resultScreen='<h2>ESSAY GRADED</h2><p>Presented to all five animatronics: '+names.join(", ")+'.</p><p style="font-size:clamp(24px,5vw,42px);color:'+(result.score>=70?'#8ff0b3':'#ff8e82')+'"><strong>'+result.score+'/100</strong></p><p>'+result.issues.length+' detected mistake(s) × 10 points deducted.</p><p>'+verdict+'</p><div style="max-width:720px;width:100%;text-align:left"><h3>Grammar feedback</h3>'+issueHtml+'</div><p>Night '+night+' ended. Academic consequences remain in effect.</p><div class="row"><button class="big" onclick="start('+night+')">Retry night '+night+'</button><button onclick="home()">Main menu</button></div>';
+ if(result.score<70){
+  var sc=$("scare");
+  sc.innerHTML='<div class="pummel-title">THE STAFF HAS REACHED A DECISION</div><div class="pummel-cast">'+["chica","golden","freddy","bonnie","foxy"].map(function(n,i){return face(n,Math.min(105,Math.max(58,Math.floor(innerWidth/7))),1).replace('class="wrap"','class="wrap" style="--beat:'+i+'"')}).join("")+'</div><div class="pummel-caption">GRAMMAR VIOLATIONS DETECTED. ADMINISTERING GROUP CONSEQUENCES.</div>';
+  sc.className="show staff-pummel";$("menu").style.display="none";screech(75);
+  setTimeout(function(){sc.className="";sc.innerHTML="";menu(resultScreen)},3200);
+ }else{menu(resultScreen);}
 }
 function hr(){return Math.floor(S.t/40)}
 function hourStr(){var h=hr();return (h==0?12:h)+" AM"}
