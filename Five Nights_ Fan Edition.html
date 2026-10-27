@@ -61,6 +61,14 @@ button:disabled{opacity:.35;cursor:not-allowed}
 #menu p{margin:0;color:var(--dim);max-width:520px;line-height:1.55;font-size:14px}
 #menu .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 #menu .big{padding:14px 26px;font-size:18px;background:#2a1512;border-color:var(--red);color:#ffd0c9}
+#menu .essay-box{width:min(720px,96%);display:flex;flex-direction:column;gap:12px;text-align:left}
+#menu .essay-box label{font-size:12px;letter-spacing:.12em;color:#c5a05b}
+#menu #chica-essay{width:100%;min-height:220px;resize:vertical;background:#090a0b;border:1px solid #65512b;color:#e9e5da;padding:14px;font:14px/1.6 "Courier New",monospace;user-select:text;-webkit-user-select:text}
+#menu #chica-essay:focus{outline:1px solid #d6b66e}
+#menu .essay-counter{font-size:12px;color:#a9a39a;display:flex;justify-content:space-between;gap:10px}
+#menu .essay-warning{color:#d05a4f;min-height:18px;font-size:12px}
+#menu .essay-submit{align-self:flex-start;background:#6d4b16;border-color:#b88a36;color:#fff1cc}
+#menu .essay-submit:disabled{opacity:.35;cursor:not-allowed}
 #menu.title-screen{inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.9fr);grid-template-rows:1fr auto;align-items:center;justify-items:stretch;gap:0;padding:clamp(18px,4vw,54px);overflow:hidden;text-align:left;background:radial-gradient(ellipse at 75% 45%,#17191b 0,#070708 50%,#020203 100%)}
 .title-brand{position:relative;z-index:2;align-self:center;padding:0 clamp(0px,2vw,24px)}
 .title-brand .eyebrow{font-size:11px;letter-spacing:.32em;color:#a0a0a0;margin-bottom:18px}
@@ -200,7 +208,7 @@ function beep(f,d,t,v){var a=ac();if(!a)return;var o=a.createOscillator(),g=a.cr
 function noise(d){var a=ac();if(!a)return;var n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(var i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);var s=a.createBufferSource(),g=a.createGain();g.gain.value=.5;s.buffer=b;s.connect(g);g.connect(a.destination);s.start()}
 
 function menu(html){var m=$("menu");m.classList.remove("title-screen");m.innerHTML=html;m.style.display="flex"}
-var titleRAF=0,titleStart=0,titleLastGlitch=0,titleGlitchX=0,titleGlitchY=0;
+var titleRAF=0,titleStart=0,titleLastGlitch=0,titleGlitchX=0,titleGlitchY=0,titleNextMove=0,titleMoveUntil=0,titleMoveX=0,titleMoveY=0,titleMoveScale=1;
 function stopTitleFeed(){if(titleRAF)cancelAnimationFrame(titleRAF);titleRAF=0}
 function startTitleFeed(){
  stopTitleFeed();var c=$("title-feed");if(!c)return;
@@ -215,12 +223,23 @@ function startTitleFeed(){
   x.fillStyle="#070809";x.beginPath();x.moveTo(W*.31,H*.1);x.lineTo(W*.69,H*.1);x.lineTo(W*.62,H*.7);x.lineTo(W*.38,H*.7);x.closePath();x.fill();
   x.strokeStyle="#34363a";x.lineWidth=5;x.beginPath();x.moveTo(W*.18,0);x.lineTo(W*.35,H*.68);x.moveTo(W*.82,0);x.lineTo(W*.65,H*.68);x.stroke();
   x.strokeStyle="#343434";x.lineWidth=2;for(var k=0;k<7;k++){var yy=H*.68+k*k*2.8;x.beginPath();x.moveTo(W*.35-k*5,yy);x.lineTo(W*.65+k*5,yy);x.stroke()}
-  var pulse=(Math.sin(t*1.7)+Math.sin(t*.47))*.5,visible=pulse>.05||Math.random()<.025;
+  // Long stillness, then a sudden half-second animatronic lurch like a damaged camera catching movement.
+  var visible=Math.random()<.982;
+  if(now>=titleNextMove){titleMoveUntil=now+430+Math.random()*90;titleNextMove=titleMoveUntil+2300+Math.random()*4800;titleMoveX=(Math.random()-.5)*W*.19;titleMoveY=(Math.random()-.5)*H*.12;titleMoveScale=.9+Math.random()*.28}
+  var moving=now<titleMoveUntil;
   if(visible){
-   var name=pulse>.62?"freddy":pulse>.32?"bonnie":pulse>.05?"chica":"foxy",im=IM[name]||IM.freddy;
+   var choice=Math.floor((Math.sin(t*.29)+1.2)*1.65),name=choice===0?"bonnie":choice===1?"chica":choice===2?"freddy":"foxy",im=IM[name]||IM.freddy;
    if(im&&im.complete&&im.naturalWidth){
     var scale=name==="freddy"?1.05:.8,ww=W*.34*scale,hh=H*.74*scale;
-    var px=W*.5-ww*.5+Math.sin(t*3)*W*.035,py=H*.73-hh*.45;
+    var px=W*.5-ww*.5,py=H*.73-hh*.45;
+    if(moving){
+     // Staccato jumps rather than a smooth animation; occasional frames smear sideways.
+     var snap=Math.floor((now/55)%3),jx=[-1,1,0][snap]*W*.025;
+     px+=titleMoveX+jx;py+=titleMoveY;
+     ww*=titleMoveScale;hh*=titleMoveScale;
+     if(Math.random()<.28){x.globalAlpha=.25;x.drawImage(im,px-(Math.random()-.5)*W*.12,py,ww,hh);x.globalAlpha=.82}
+     if(Math.random()<.22){x.fillStyle="rgba(230,230,230,.35)";x.fillRect(0,py+Math.random()*hh,W,2+Math.random()*8)}
+    }
     x.globalAlpha=.82;x.drawImage(im,px,py,ww,hh);x.globalAlpha=1;
    }
   }
@@ -255,7 +274,23 @@ function screech(f){var a=ac();if(!a)return;var t=a.currentTime;[1,1.5,2.02].for
 function scare(n){
  if(!S.run)return;S.run=0;S.cam=0;screech({bonnie:150,chica:210,freddy:95,foxy:280,golden:60}[n]||120);
  var sc=$("scare");sc.innerHTML=face(n,Math.min(innerWidth,innerHeight)*.8|0,0);sc.querySelector(".face").insertAdjacentHTML("beforeend",'<u class="mo"></u>');sc.className="show";
- setTimeout(function(){menu('<h2>'+nm(n)+' got you</h2><p>Night '+S.n+' ended at '+hourStr()+'.</p><div class="row"><button class="big" onclick="start('+S.n+')">Retry night '+S.n+'</button><button onclick="home()">Main menu</button></div>');sc.className=""},2300);
+ setTimeout(function(){sc.className="";if(n==="chica"){chicaEssay();return}menu('<h2>'+nm(n)+' got you</h2><p>Night '+S.n+' ended at '+hourStr()+'.</p><div class="row"><button class="big" onclick="start('+S.n+')">Retry night '+S.n+'</button><button onclick="home()">Main menu</button></div>')},2300);
+}
+function chicaEssay(){
+ menu('<h2 style="color:#e5c46c">CHICA HAS ASSIGNED YOU AN ESSAY.</h2><p>You were caught. Academic consequences are now in effect.</p><p><strong>Prompt:</strong> Write a literary analysis of John Knowles' <em>A Separate Peace</em>. Analyze how Gene Forrester's jealousy and guilt shape his friendship with Phineas, explain how the novel explores the loss of innocence during wartime, and support your interpretation with specific moments from the book. Do not just summarize the plot: explain what the events reveal about the characters and the novel's themes.</p><p>Minimum: <strong>300 words.</strong> No escaping the assignment. Your essay stays in this game session only.</p><div class="essay-box"><label for="chica-essay">YOUR RESPONSE</label><textarea id="chica-essay" placeholder="Introduction, evidence, analysis, conclusion..." oninput="essayCount()"></textarea><div class="essay-counter"><span id="essay-count">0 / 300 words</span><span>CHICA'S GRADING RUBRIC: UNFORGIVING</span></div><div id="essay-warning" class="essay-warning">Write at least 300 words to unlock the submit button.</div><button id="essay-submit" class="essay-submit" disabled onclick="submitChicaEssay()">Submit essay</button></div>');
+}
+function essayCount(){
+ var el=$("chica-essay");if(!el)return;
+ var words=el.value.trim().match(/\S+/g)||[],count=words.length,btn=$("essay-submit"),label=$("essay-count"),warning=$("essay-warning");
+ if(label)label.textContent=count+" / 300 words";
+ if(btn)btn.disabled=count<300;
+ if(warning)warning.textContent=count<300?"You need "+(300-count)+" more words. Chica is waiting.":"Requirement met. Submit when ready.";
+}
+function submitChicaEssay(){
+ var el=$("chica-essay");if(!el)return;
+ var words=el.value.trim().match(/\S+/g)||[];if(words.length<300){essayCount();return}
+ var night=S?S.n:1;
+ menu('<h2>ESSAY ACCEPTED.</h2><p>Chica has reviewed your submission and has decided to let you live. For now.</p><p>Night '+night+' ended. Your academic record will never recover.</p><div class="row"><button class="big" onclick="start('+night+')">Retry night '+night+'</button><button onclick="home()">Main menu</button></div>');
 }
 function hr(){return Math.floor(S.t/40)}
 function hourStr(){var h=hr();return (h==0?12:h)+" AM"}
