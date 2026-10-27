@@ -262,7 +262,7 @@ function home(){
 function start(n){
  stopTitleFeed();$("menu").classList.remove("title-screen");ac();
  S={n:n,t:0,pw:100,lure:0,lr:0,lcd:0,gold:0,gw:0,gt:0,gcd:0,seen:{},dL:0,dR:0,lL:0,lR:0,cam:0,sel:1,p:{bonnie:0,chica:0,freddy:0,foxy:0},tm:{bonnie:0,chica:0,freddy:0,foxy:0},fr:0,hits:0,out:0,outT:0,notice:"SYSTEM READY — listen for movement.",noticeT:0,pw25:0,pw10:0,warned:{},run:1};
- menu('<h2>Night '+n+'</h2><p>12:00 AM</p>');S.run=0;setTimeout(function(){if(S&&S.n==n){$("menu").style.display="none";S.run=1}},1800);$("scare").className="";$("pst").innerHTML=["bonnie","chica","freddy","foxy","golden"].map(function(n){return face(n,34)}).join("");$("nt").textContent="Night "+n;buildCams();render();
+ menu('<h2>Night '+n+'</h2><p>12:00 AM</p><p style="max-width:420px;font-size:12px">Skill tip: keep the camera on an animatronic\'s current feed to interrupt its advance. Track threats, time your doors, and conserve power.</p>');S.run=0;setTimeout(function(){if(S&&S.n==n){$("menu").style.display="none";S.run=1}},1800);$("scare").className="";$("pst").innerHTML=["bonnie","chica","freddy","foxy","golden"].map(function(n){return face(n,34)}).join("");$("nt").textContent="Night "+n;buildCams();render();
 }
 function buildCams(){var h="";[1,4,5,6,2,0,3,7].forEach(function(i){h+=i?'<button data-c="'+i+'" onclick="pick('+i+')">'+i+' '+CAMS[i]+'<span class="dots" id="d'+i+'"></span></button>':'<div class="you">YOU</div>'});$("cb").innerHTML=h}
 function stat(){var s=$("st");s.className="";void s.offsetWidth;s.className="on"}
@@ -277,7 +277,7 @@ function scare(n){
  setTimeout(function(){sc.className="";if(n==="chica"){chicaEssay();return}menu('<h2>'+nm(n)+' got you</h2><p>Night '+S.n+' ended at '+hourStr()+'.</p><div class="row"><button class="big" onclick="start('+S.n+')">Retry night '+S.n+'</button><button onclick="home()">Main menu</button></div>')},2300);
 }
 function chicaEssay(){
- menu('<h2 style="color:#e5c46c">CHICA HAS ASSIGNED YOU AN ESSAY.</h2><p>You were caught. Academic consequences are now in effect.</p><p><strong>Prompt:</strong> Write a literary analysis of John Knowles' <em>A Separate Peace</em>. Analyze how Gene Forrester's jealousy and guilt shape his friendship with Phineas, explain how the novel explores the loss of innocence during wartime, and support your interpretation with specific moments from the book. Do not just summarize the plot: explain what the events reveal about the characters and the novel's themes.</p><p>Minimum: <strong>300 words.</strong> No escaping the assignment. Your essay stays in this game session only.</p><div class="essay-box"><label for="chica-essay">YOUR RESPONSE</label><textarea id="chica-essay" placeholder="Introduction, evidence, analysis, conclusion..." oninput="essayCount()"></textarea><div class="essay-counter"><span id="essay-count">0 / 300 words</span><span>CHICA'S GRADING RUBRIC: UNFORGIVING</span></div><div id="essay-warning" class="essay-warning">Write at least 300 words to unlock the submit button.</div><button id="essay-submit" class="essay-submit" disabled onclick="submitChicaEssay()">Submit essay</button></div>');
+ menu(`<h2 style="color:#e5c46c">CHICA HAS ASSIGNED YOU AN ESSAY.</h2><p>You were caught. Academic consequences are now in effect.</p><p><strong>Prompt:</strong> Write a literary analysis of John Knowles' <em>A Separate Peace</em>. Analyze how Gene Forrester's jealousy and guilt shape his friendship with Phineas, explain how the novel explores the loss of innocence during wartime, and support your interpretation with specific moments from the book. Do not just summarize the plot: explain what the events reveal about the characters and the novel's themes.</p><p>Minimum: <strong>300 words.</strong> No escaping the assignment. Your essay stays in this game session only.</p><div class="essay-box"><label for="chica-essay">YOUR RESPONSE</label><textarea id="chica-essay" placeholder="Introduction, evidence, analysis, conclusion..." oninput="essayCount()"></textarea><div class="essay-counter"><span id="essay-count">0 / 300 words</span><span>CHICA'S GRADING RUBRIC: UNFORGIVING</span></div><div id="essay-warning" class="essay-warning">Write at least 300 words to unlock the submit button.</div><button id="essay-submit" class="essay-submit" disabled onclick="submitChicaEssay()">Submit essay</button></div>`);
 }
 function essayCount(){
  var el=$("chica-essay");if(!el)return;
@@ -318,7 +318,16 @@ function tick(){
  else if(S.gw>0){if(S.gw>1||!S.cam){S.gw--;if(S.gw==0){S.gold=1;S.gt=5}}}
  else if(hr()>=1&&S.gcd<=0&&Math.random()<.02+n*.004){S.gw=6;S.notice="CAM 5: unexplained signal detected.";S.noticeT=4;beep(760,.22,"sine",.035)}
  var act=(S.t%4==0);
- function roll(a){return act&&Math.random()*25<AI[a][i]}
+ // Skill expression: holding the camera on an animatronic's current room suppresses its next movement roll.
+ // You must identify the right feed and keep spending power to maintain surveillance.
+ function tracked(a){
+  if(!S.cam)return false;
+  var q=p[a];
+  if(q===0)return S.sel===rm0(a);
+  if(q===1)return S.sel===(a==="bonnie"?2:3);
+  return false;
+ }
+ function roll(a){return act&&!tracked(a)&&Math.random()*25<AI[a][i]}
  ["bonnie","chica","freddy"].forEach(function(a){
   var d=a=="bonnie"?"dL":"dR";
   if(p[a]==2){tm[a]--;if(tm[a]==2&&!S[d]&&!S.warned[a]){S.warned[a]=1;S.notice=(a=="bonnie"?"WEST DOOR: impact imminent.":a=="chica"?"EAST DOOR: impact imminent.":"FREDDY: attack imminent.");S.noticeT=2;beep(a=="freddy"?95:145,.22,"square",.055)}if(tm[a]<=0){if(S[d]){p[a]=a=="freddy"?0:1;tm[a]=0;S.warned[a]=0;beep(70,.2,"square",.1)}else{scare(a)}}return}
