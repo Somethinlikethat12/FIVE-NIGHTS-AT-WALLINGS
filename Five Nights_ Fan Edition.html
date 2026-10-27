@@ -320,7 +320,7 @@ function win(){
  var grade=S.pw>=60&&S.hits===0?"S":S.pw>=40&&S.hits<=1?"A":S.pw>=20&&S.hits<=2?"B":S.pw>=10?"C":"D";
  if(S.n>=best&&S.n<5){best=S.n+1;try{localStorage.setItem("fn_best",best)}catch(e){}}
  var last=S.n>=5;
- menu('<h2>6 AM</h2><p>'+(last?"You survived all five nights. The doors are open and the sun is up.":"Night "+S.n+" survived. Your shift is over.")+'</p><p><strong>Shift rating: '+grade+'</strong><br>Power remaining: '+Math.ceil(S.pw)+'%<br>Foxy impacts absorbed: '+S.hits+'</p><p class="note">S: efficient and clean · A: strong control · B: room to improve · C: barely held on · D: critical power</p><div class="row">'+(last?'':'<button class="big" onclick="start('+(S.n+1)+')">Start night '+(S.n+1)+'</button>')+'<button onclick="home()">Main menu</button></div>');
+ menu('<h2>6 AM</h2><p>'+(last?"You survived all five nights. The doors are open and the sun is up.":"Night "+S.n+" survived. Your shift is over.")+'</p><p><strong>Shift rating: '+grade+'</strong><br>Power remaining: '+Math.ceil(S.pw)+'%<br>MRs. Jordan impacts absorbed: '+S.hits+'</p><p class="note">S: efficient and clean · A: strong control · B: room to improve · C: barely held on · D: critical power</p><div class="row">'+(last?'':'<button class="big" onclick="start('+(S.n+1)+')">Start night '+(S.n+1)+'</button>')+'<button onclick="home()">Main menu</button></div>');
 }
 function powerOut(){S.out=1;S.gold=0;S.outT=9;S.dL=S.dR=S.lL=S.lR=S.cam=0;S.pw=0;noise(.5);render()}
 function tick(){
@@ -351,9 +351,9 @@ function tick(){
  function roll(a){return act&&!tracked(a)&&Math.random()*25<AI[a][i]}
  ["bonnie","chica","freddy"].forEach(function(a){
   var d=a=="bonnie"?"dL":"dR";
-  if(p[a]==2){tm[a]--;if(tm[a]==2&&!S[d]&&!S.warned[a]){S.warned[a]=1;S.notice=(a=="bonnie"?"WEST DOOR: impact imminent.":a=="chica"?"EAST DOOR: impact imminent.":"FREDDY: attack imminent.");S.noticeT=2;beep(a=="freddy"?95:145,.22,"square",.055)}if(tm[a]<=0){if(S[d]){p[a]=a=="freddy"?0:1;tm[a]=0;S.warned[a]=0;beep(70,.2,"square",.1)}else{scare(a)}}return}
+  if(p[a]==2){tm[a]--;if(tm[a]==2&&!S[d]&&!S.warned[a]){S.warned[a]=1;S.notice=(a=="bonnie"?"WEST DOOR: impact imminent.":a=="chica"?"EAST DOOR: impact imminent.":"MR. Snowden: attack imminent.");S.noticeT=2;beep(a=="freddy"?95:145,.22,"square",.055)}if(tm[a]<=0){if(S[d]){p[a]=a=="freddy"?0:1;tm[a]=0;S.warned[a]=0;beep(70,.2,"square",.1)}else{scare(a)}}return}
   if(a=="freddy"&&S.cam&&S.sel==(p.freddy==0?1:3))return;
-  if(roll(a)&&!(S.lure>0&&p[a]==0)){p[a]++;S.notice=(a=="bonnie"?"WEST HALL: heavy footsteps.":a=="chica"?"EAST HALL: scraping metal.":"CAMERA FEED: low mechanical hum.");S.noticeT=4;beep(a=="bonnie"?180:a=="chica"?240:110,.16,"triangle",.035);if(p[a]==2){tm[a]=Math.max(3,8-n);S.warned[a]=0;S.notice=(a=="bonnie"?"WEST DOOR: something is waiting.":a=="chica"?"EAST DOOR: something is waiting.":"FREDDY IS CLOSE — check the east side.");S.noticeT=4}}
+  if(roll(a)&&!(S.lure>0&&p[a]==0)){p[a]++;S.notice=(a=="bonnie"?"COach Slaughter in the west hall: heavy footsteps.":a=="chica"?"Mrs Walling in the east hall: scraping metal.":"MR. Snowden is nearby: low mechanical hum.");S.noticeT=4;beep(a=="bonnie"?180:a=="chica"?240:110,.16,"triangle",.035);if(p[a]==2){tm[a]=Math.max(3,8-n);S.warned[a]=0;S.notice=(a=="bonnie"?"COach Slaughter is waiting at the west door.":a=="chica"?"Mrs Walling is waiting at the east door.":"MR. Snowden is close — check the east side.");S.noticeT=4}}
  });
  if(S.fr>0){S.fr--;if(S.fr==0){if(S.dL){S.hits++;S.pw=Math.max(1,S.pw-(2+S.hits*2));p.foxy=1;beep(60,.4,"square",.2);noise(.25)}else{scare("foxy");return}}}
  else if(p.foxy<3){if(!(S.cam&&S.sel==4)&&roll("foxy")){p.foxy++;S.notice=p.foxy==1?"PIRATE COVE: curtain moved.":p.foxy==2?"PIRATE COVE: movement detected.":"PIRATE COVE: sprint imminent.";S.noticeT=4;beep(320-p.foxy*45,.12,"sawtooth",.04);if(p.foxy==3)S.fr=6}}
@@ -418,7 +418,7 @@ function hd(x,n,px,py,r){var i=IM[n];x.save();x.beginPath();x.arc(px,py,r,0,7);x
 function pt(e,c,W,H){var r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 function hud(x,t){x.fillStyle='#9aa';x.font='14px Courier New';x.textAlign='left';x.fillText(t,10,20)}
 function play(g){stopA();var W=g?360:640,H=g?420:240;
- menu('<h2>'+GN[g]+'</h2><canvas id="ac" width="'+W+'" height="'+H+'" style="max-width:100%;max-height:60vh;background:#0b0d14;border:3px solid #2a3140;border-radius:8px;touch-action:none"></canvas><p>'+['Tap, click or press any key to jump.','Move your mouse or finger. Catch cupcakes, dodge Golden Freddy.','Tap the faces. Golden Freddy is worth 5.'][g]+'</p><div class="row"><button onclick="arc()">Back</button></div>');
+ menu('<h2>'+GN[g]+'</h2><canvas id="ac" width="'+W+'" height="'+H+'" style="max-width:100%;max-height:60vh;background:#0b0d14;border:3px solid #2a3140;border-radius:8px;touch-action:none"></canvas><p>'+['Tap, click or press any key to jump.','Move your mouse or finger. Catch cupcakes, dodge Golden Taylor.','Tap the faces. Golden Taylor is worth 5.'][g]+'</p><div class="row"><button onclick="arc()">Back</button></div>');
  var c=$('ac'),x=c.getContext('2d'),s={sc:0,f:0,over:0,lv:5},fr=[g0,g1,g2][g](x,s,W,H);ST=s;
  c.onpointerdown=function(e){if(s.over)return play(g);if(s.dn)s.dn(pt(e,c,W,H))};
  c.onpointermove=function(e){if(s.mv)s.mv(pt(e,c,W,H))};
