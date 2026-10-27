@@ -200,7 +200,7 @@ function beep(f,d,t,v){var a=ac();if(!a)return;var o=a.createOscillator(),g=a.cr
 function noise(d){var a=ac();if(!a)return;var n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(var i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);var s=a.createBufferSource(),g=a.createGain();g.gain.value=.5;s.buffer=b;s.connect(g);g.connect(a.destination);s.start()}
 
 function menu(html){var m=$("menu");m.classList.remove("title-screen");m.innerHTML=html;m.style.display="flex"}
-var titleRAF=0,titleStart=0,titleLastGlitch=0,titleGlitchX=0,titleGlitchY=0;
+var titleRAF=0,titleStart=0,titleLastGlitch=0,titleGlitchX=0,titleGlitchY=0,titleNextMove=0,titleMoveUntil=0,titleMoveX=0,titleMoveY=0,titleMoveScale=1;
 function stopTitleFeed(){if(titleRAF)cancelAnimationFrame(titleRAF);titleRAF=0}
 function startTitleFeed(){
  stopTitleFeed();var c=$("title-feed");if(!c)return;
@@ -215,12 +215,23 @@ function startTitleFeed(){
   x.fillStyle="#070809";x.beginPath();x.moveTo(W*.31,H*.1);x.lineTo(W*.69,H*.1);x.lineTo(W*.62,H*.7);x.lineTo(W*.38,H*.7);x.closePath();x.fill();
   x.strokeStyle="#34363a";x.lineWidth=5;x.beginPath();x.moveTo(W*.18,0);x.lineTo(W*.35,H*.68);x.moveTo(W*.82,0);x.lineTo(W*.65,H*.68);x.stroke();
   x.strokeStyle="#343434";x.lineWidth=2;for(var k=0;k<7;k++){var yy=H*.68+k*k*2.8;x.beginPath();x.moveTo(W*.35-k*5,yy);x.lineTo(W*.65+k*5,yy);x.stroke()}
-  var pulse=(Math.sin(t*1.7)+Math.sin(t*.47))*.5,visible=pulse>.05||Math.random()<.025;
+  // Long stillness, then a sudden half-second animatronic lurch like a damaged camera catching movement.
+  var visible=Math.random()<.982;
+  if(now>=titleNextMove){titleMoveUntil=now+360+Math.random()*150;titleNextMove=titleMoveUntil+1700+Math.random()*3100;titleMoveX=(Math.random()-.5)*W*.12;titleMoveY=(Math.random()-.5)*H*.07;titleMoveScale=.92+Math.random()*.2}
+  var moving=now<titleMoveUntil;
   if(visible){
-   var name=pulse>.62?"freddy":pulse>.32?"bonnie":pulse>.05?"chica":"foxy",im=IM[name]||IM.freddy;
+   var choice=Math.floor((Math.sin(t*.29)+1.2)*1.65),name=choice===0?"bonnie":choice===1?"chica":choice===2?"freddy":"foxy",im=IM[name]||IM.freddy;
    if(im&&im.complete&&im.naturalWidth){
     var scale=name==="freddy"?1.05:.8,ww=W*.34*scale,hh=H*.74*scale;
-    var px=W*.5-ww*.5+Math.sin(t*3)*W*.035,py=H*.73-hh*.45;
+    var px=W*.5-ww*.5,py=H*.73-hh*.45;
+    if(moving){
+     // Staccato jumps rather than a smooth animation; occasional frames smear sideways.
+     var snap=Math.floor((now/55)%3),jx=[-1,1,0][snap]*W*.025;
+     px+=titleMoveX+jx;py+=titleMoveY;
+     ww*=titleMoveScale;hh*=titleMoveScale;
+     if(Math.random()<.28){x.globalAlpha=.25;x.drawImage(im,px-(Math.random()-.5)*W*.12,py,ww,hh);x.globalAlpha=.82}
+     if(Math.random()<.22){x.fillStyle="rgba(230,230,230,.35)";x.fillRect(0,py+Math.random()*hh,W,2+Math.random()*8)}
+    }
     x.globalAlpha=.82;x.drawImage(im,px,py,ww,hh);x.globalAlpha=1;
    }
   }
