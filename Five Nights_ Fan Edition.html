@@ -199,7 +199,7 @@ function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)
 function beep(f,d,t,v){var a=ac();if(!a)return;var o=a.createOscillator(),g=a.createGain();o.type=t||"square";o.frequency.value=f;g.gain.value=v||.06;g.gain.exponentialRampToValueAtTime(.001,a.currentTime+d);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+d)}
 function noise(d){var a=ac();if(!a)return;var n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(var i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);var s=a.createBufferSource(),g=a.createGain();g.gain.value=.5;s.buffer=b;s.connect(g);g.connect(a.destination);s.start()}
 
-function menu(html){var m=$("menu");m.innerHTML=html;m.style.display="flex"}
+function menu(html){var m=$("menu");m.classList.remove("title-screen");m.innerHTML=html;m.style.display="flex"}
 var titleRAF=0,titleStart=0,titleLastGlitch=0,titleGlitchX=0,titleGlitchY=0;
 function stopTitleFeed(){if(titleRAF)cancelAnimationFrame(titleRAF);titleRAF=0}
 function startTitleFeed(){
