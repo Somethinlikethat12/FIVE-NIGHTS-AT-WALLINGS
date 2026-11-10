@@ -280,7 +280,7 @@ function camT(){if(!S||!S.run||S.out||S.paused)return;S.cam=S.cam?0:1;if(S.cam){
 function screech(f){var a=ac();if(!a)return;var t=a.currentTime;[1,1.5,2.02].forEach(function(m,i){var o=a.createOscillator(),g=a.createGain();o.type=i?'square':'sawtooth';o.frequency.setValueAtTime(f*m*5,t);o.frequency.exponentialRampToValueAtTime(f*m,t+1.3);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+1.6);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+1.6)});noise(1.6);setTimeout(function(){noise(.4)},500)}
 function scare(n){
  if(!S.run)return;S.run=0;S.cam=0;screech({bonnie:150,chica:210,freddy:95,foxy:280,golden:60}[n]||120);
- var sc=$("scare");sc.innerHTML=face(n,Math.min(innerWidth,innerHeight)*.8|0,0);sc.querySelector(".face").insertAdjacentHTML("beforeend",'<u class="mo"></u>');sc.className="show";
+ var sc=$("scare");sc.innerHTML=face(n==="moses"?"golden":n,Math.min(innerWidth,innerHeight)*.8|0,0);sc.querySelector(".face").insertAdjacentHTML("beforeend",'<u class="mo"></u>');sc.className="show";
  setTimeout(function(){sc.className="";hideBandPanels();if(n==="chica"){chicaEssay();return}menu('<h2>'+(n==='moses'?'THE BAND WENT SILENT — MR. MOSES & MRS. WEN GOT YOU':nm(n)+' got you')+'</h2><p>Night '+S.n+' ended at '+hourStr()+'.</p><div class="row"><button class="big" onclick="start('+S.n+')">Retry night '+S.n+'</button><button onclick="home()">Main menu</button></div>')},2300);
 }
 function chicaEssay(){
