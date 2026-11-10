@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Five Nights Online — Wallings</title>
+<style>
+:root{color-scheme:dark;--bg:#07090d;--panel:#111722;--line:#303b4b;--gold:#d7b36b;--red:#a83232;--green:#62d49a;--muted:#8994a5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#1a202b,#07090d 65%);color:#e8e9ed;font:14px "Courier New",monospace;min-height:100vh}button,input{font:inherit}button{background:#202a39;color:#eee;border:1px solid #566174;padding:10px 14px;cursor:pointer}button:hover{border-color:var(--gold)}button:disabled{opacity:.35;cursor:not-allowed}input{background:#090d13;border:1px solid var(--line);color:#fff;padding:11px;min-width:0}a{color:var(--gold)}.shell{max-width:1180px;margin:auto;padding:20px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid var(--line);padding-bottom:14px}.eyebrow{color:var(--gold);letter-spacing:.2em;font-size:11px}.top h1{font-size:clamp(23px,4vw,38px);margin:5px 0}.status{color:var(--muted);font-size:12px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;margin-top:16px}.panel{background:#0d121aee;border:1px solid var(--line);padding:15px;box-shadow:0 10px 35px #0005}.panel h2{font-size:16px;color:var(--gold);margin:0 0 12px}.setup{max-width:650px;margin:45px auto}.setup p,.muted{color:var(--muted);line-height:1.6}.field{display:grid;gap:6px;margin:12px 0}.field label{color:#b6bfcc;font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.primary{background:#5b2927;border-color:#b65b4f}.world{position:relative;min-height:500px;overflow:hidden;background:linear-gradient(#101b24 0 58%,#191a1d 58%);border:1px solid #46505d}.world:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 95px,#ffffff08 96px 98px),linear-gradient(90deg,#0008,transparent 25% 75%,#0008);pointer-events:none}.roomtitle{position:absolute;top:13px;left:15px;color:#d8c28d;letter-spacing:.16em;font-size:12px}.map{position:absolute;inset:54px 20px 95px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:9px}.zone{border:1px solid #596270;background:linear-gradient(145deg,#30343a,#121820);display:flex;flex-direction:column;justify-content:space-between;padding:12px;position:relative;cursor:pointer;min-height:90px}.zone:hover,.zone.selected{border-color:var(--gold);box-shadow:inset 0 0 25px #c99d3922}.zone strong{font-size:12px;color:#e7d6ad}.zone small{color:#8994a5}.avatars{display:flex;flex-wrap:wrap;gap:4px}.avatar{font-size:10px;padding:3px 5px;background:#314b43;border:1px solid #5c8e79;color:#d8ffeb}.avatar.me{background:#644c28;border-color:var(--gold)}.threat{position:absolute;right:12px;top:12px;color:#ff8a7e;font-size:11px}.worldfoot{position:absolute;bottom:12px;left:14px;right:14px;display:flex;justify-content:space-between;gap:10px;align-items:center}.console{display:flex;gap:6px;flex-wrap:wrap}.console button{padding:8px;font-size:11px}.sidebar{display:flex;flex-direction:column;gap:14px}.playerlist{display:grid;gap:7px}.player{display:flex;justify-content:space-between;gap:8px;padding:7px;background:#171f2b;font-size:12px}.role{color:var(--gold)}.chatlog{height:230px;overflow:auto;background:#070b10;padding:8px;font-size:11px;line-height:1.6;white-space:pre-wrap}.chatrow{display:flex;gap:5px;margin-top:7px}.chatrow input{flex:1}.hidden{display:none!important}.banner{padding:9px;border:1px solid #6c4c25;color:#e9d29b;background:#241b0f;margin-bottom:10px;font-size:12px}.danger{color:#ff958e}.good{color:var(--green)}.bar{height:7px;background:#242b35;margin-top:8px}.bar i{display:block;height:100%;width:100%;background:var(--green)}.footnote{font-size:10px;color:#778294;margin-top:14px;line-height:1.5}@media(max-width:800px){.layout{grid-template-columns:1fr}.world{min-height:460px}.sidebar{display:grid;grid-template-columns:1fr 1fr}.sidebar .chatpanel{grid-column:1/-1}}@media(max-width:520px){.shell{padding:12px}.sidebar{display:flex}.map{inset:48px 9px 95px;gap:5px}.zone{padding:7px}.zone strong{font-size:10px}.world{min-height:420px}.worldfoot{left:8px;right:8px;bottom:8px}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top"><div><div class="eyebrow">FAZBEAR ENTERTAINMENT // NETWORK DIVISION</div><h1>FIVE NIGHTS <span style="color:#a83232">ONLINE</span></h1><div class="status" id="connection">OFFLINE MODE · configure a shared world to play together</div></div><button onclick="location.href='index.html'">← Main game</button></header>
+<section id="setup" class="panel setup">
+ <div class="eyebrow">PERSISTENT WORLD // BUILD 0.1</div><h2>Enter the pizzeria</h2>
+ <p>This is the multiplayer world companion to the original night-shift game. Explore the building with other guards, chat, take jobs, and launch shared survival shifts. A free Supabase project provides the realtime connection; no game server or local computer setup is required.</p>
+ <div class="field"><label>YOUR GUARD NAME</label><input id="nickname" maxlength="18" placeholder="e.g. NightWatch"></div>
+ <div class="field"><label>SUPABASE PROJECT URL</label><input id="projectUrl" placeholder="https://your-project.supabase.co"></div>
+ <div class="field"><label>SUPABASE PUBLIC ANON KEY</label><input id="anonKey" placeholder="Paste the public anon key"></div>
+ <div class="actions"><button class="primary" onclick="connectWorld()">CONNECT TO PUBLIC WORLD</button><button onclick="tryDemo()">TRY SOLO DEMO</button></div>
+ <p class="footnote">Connection setup is a one-time step per browser. Use only the project's public anon key—never a service-role or secret key. The included SQL setup file creates the minimal public profile and persistence tables. This first build uses Supabase Realtime presence/broadcast for live sessions.</p>
+ <div id="setupError" class="danger"></div>
+</section>
+<main id="game" class="hidden">
+ <div id="shiftBanner" class="banner">PUBLIC LOBBY · Explore the building. Shift events are shared with everyone in this instance.</div>
+ <div class="layout">
+  <section class="world">
+   <div class="roomtitle">WALLINGS FAMILY PIZZERIA / FLOOR 01</div><div class="threat" id="threat">THREAT LEVEL: QUIET</div>
+   <div class="map" id="map">
+    <div class="zone selected" data-room="lobby" onclick="moveRoom('lobby')"><strong>FRONT LOBBY</strong><small>Entrance · reception</small><div class="avatars" id="avatars-lobby"></div></div>
+    <div class="zone" data-room="stage" onclick="moveRoom('stage')"><strong>SHOW STAGE</strong><small>Main performance room</small><div class="avatars" id="avatars-stage"></div></div>
+    <div class="zone" data-room="dining" onclick="moveRoom('dining')"><strong>DINING ROOM</strong><small>Tables · party area</small><div class="avatars" id="avatars-dining"></div></div>
+    <div class="zone" data-room="west" onclick="moveRoom('west')"><strong>WEST HALL</strong><small>Security route A</small><div class="avatars" id="avatars-west"></div></div>
+    <div class="zone" data-room="office" onclick="moveRoom('office')"><strong>SECURITY OFFICE</strong><small>Power · cameras · doors</small><div class="avatars" id="avatars-office"></div></div>
+    <div class="zone" data-room="east" onclick="moveRoom('east')"><strong>EAST HALL</strong><small>Security route B</small><div class="avatars" id="avatars-east"></div></div>
+   </div>
+   <div class="worldfoot"><div><b id="currentRoom">FRONT LOBBY</b><div class="muted" id="roomHint">You are off shift. Look around.</div></div><div class="console"><button onclick="interact('camera')">CAMERAS</button><button onclick="interact('maintenance')">MAINTENANCE</button><button class="primary" onclick="startSharedShift()">START NIGHT SHIFT</button></div></div>
+  </section>
+  <aside class="sidebar">
+   <section class="panel"><h2>ON-SITE PERSONNEL <span id="playerCount" class="muted">0</span></h2><div class="playerlist" id="players"></div><p class="footnote">Roles rotate between shifts. The shift starter becomes temporary shift lead.</p></section>
+   <section class="panel"><h2>SHIFT STATUS</h2><div id="shiftState">No active shift</div><div class="bar"><i id="powerBar"></i></div><div class="muted" id="powerLabel">Building power: 100%</div><div class="actions"><button onclick="interact('door-west')">WEST DOOR</button><button onclick="interact('door-east')">EAST DOOR</button></div></section>
+   <section class="panel chatpanel"><h2>GUARD RADIO</h2><div class="chatlog" id="chatlog"></div><div class="chatrow"><input id="chatInput" maxlength="180" placeholder="Message the guards…"><button onclick="sendChat()">SEND</button></div></section>
+  </aside>
+ </div>
+ <div class="footnote">WASD to move between nearby rooms · click a room to travel · radio messages are visible to everyone connected to this public world. Do not share personal information in public chat.</div>
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var client=null,channel=null,me={id:'local-'+Math.random().toString(36).slice(2),name:'Guard',room:'lobby',role:'Visitor'},players={},demo=false,shift={active:false,hour:12,power:100,west:false,east:false,threat:'QUIET',lead:null},chat=[];
+var ROOMS={lobby:'FRONT LOBBY',stage:'SHOW STAGE',dining:'DINING ROOM',west:'WEST HALL',office:'SECURITY OFFICE',east:'EAST HALL'};
+function el(id){return document.getElementById(id)}
+function say(message,kind){var d=document.createElement('div');d.textContent=message;el('chatlog').appendChild(d);el('chatlog').scrollTop=el('chatlog').scrollHeight}
+function setConnected(label){el('connection').textContent=label}
+function tryDemo(){demo=true;me.name=(el('nickname').value||'Solo Guard').trim().slice(0,18);if(!me.name)me.name='Solo Guard';el('setup').classList.add('hidden');el('game').classList.remove('hidden');players[me.id]=me;render();say('SYSTEM: Local demo started. No other players can join this session.');}
+async function connectWorld(){
+ var url=el('projectUrl').value.trim().replace(/\/$/,'');var key=el('anonKey').value.trim();me.name=(el('nickname').value||'Guard').trim().slice(0,18)||'Guard';
+ if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)||!key){el('setupError').textContent='Enter a valid Supabase project URL and public anon key.';return}
+ try{localStorage.setItem('wallings_nickname',me.name);localStorage.setItem('wallings_supabase_url',url);localStorage.setItem('wallings_supabase_key',key)}catch(e){}
+ try{
+  client=window.supabase.createClient(url,key);
+  channel=client.channel('wallings-public-pizzeria',{config:{presence:{key:me.id},broadcast:{self:false}}});
+  channel.on('presence',{event:'sync'},syncPlayers);
+  channel.on('broadcast',{event:'world'},function(payload){applyWorld(payload.payload)});
+  channel.on('broadcast',{event:'chat'},function(payload){var m=payload.payload;if(m&&m.id!==me.id)say(m.name+': '+m.text)});
+  channel.on('broadcast',{event:'action'},function(payload){var a=payload.payload;if(a&&a.id!==me.id)say(a.name+' '+a.text)});
+  await channel.subscribe(async function(status){if(status==='SUBSCRIBED'){await channel.track({id:me.id,name:me.name,room:me.room,role:me.role,joined:Date.now()});el('setup').classList.add('hidden');el('game').classList.remove('hidden');setConnected('CONNECTED · public pizzeria shard');say('SYSTEM: Connected. Welcome, '+me.name+'.');render()}else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){el('setupError').textContent='Could not join the public world. Check the project URL, key, and Realtime settings.'}});
+ }catch(e){el('setupError').textContent='Connection failed: '+e.message}
+}
+function syncPlayers(){if(!channel)return;var state=channel.presenceState(),next={};Object.keys(state).forEach(function(k){(state[k]||[]).forEach(function(p){next[p.id||k]=p})});players=next;players[me.id]=Object.assign({},players[me.id]||{},me);render()}
+async function track(){if(channel&&!demo)await channel.track({id:me.id,name:me.name,room:me.room,role:me.role,joined:Date.now()})}
+function broadcast(event,payload){if(channel&&!demo)channel.send({type:'broadcast',event:event,payload:payload})}
+function moveRoom(room){if(!ROOMS[room])return;me.room=room;track();render();if(room==='office')say('You report to the security office.');}
+function render(){
+ Object.keys(ROOMS).forEach(function(r){var box=el('avatars-'+r);box.innerHTML='';Object.keys(players).forEach(function(id){var p=players[id];if(p.room===r){var tag=document.createElement('span');tag.className='avatar'+(id===me.id?' me':'');tag.textContent=p.name+(p.role==='Shift Lead'?' ★':'');box.appendChild(tag)}});var zone=document.querySelector('[data-room="'+r+'"]');zone.classList.toggle('selected',me.room===r)});
+ el('currentRoom').textContent=ROOMS[me.room];el('players').innerHTML='';var count=Object.keys(players).length;el('playerCount').textContent='('+count+')';Object.keys(players).forEach(function(id){var p=players[id],d=document.createElement('div');d.className='player';var n=document.createElement('span');n.textContent=p.name;var role=document.createElement('span');role.className='role';role.textContent=p.role||'Visitor';d.append(n,role);el('players').appendChild(d)});
+ el('shiftState').textContent=shift.active?'NIGHT SHIFT ACTIVE · '+shift.hour+':00 AM':'No active shift';el('powerBar').style.width=shift.power+'%';el('powerLabel').textContent='Building power: '+Math.round(shift.power)+'%';el('threat').textContent='THREAT LEVEL: '+shift.threat;el('roomHint').textContent=shift.active?'Stay together. Assign someone to cameras and keep power under control.':'You are off shift. Look around.';
+}
+function applyWorld(w){if(!w)return;if(w.shift)shift=w.shift;if(w.players){players=w.players}render()}
+function startSharedShift(){
+ if(shift.active){say('A night shift is already running.');return}
+ me.role='Shift Lead';shift={active:true,hour:12,power:100,west:false,east:false,threat:'LOW',lead:me.id};players[me.id]=me;broadcast('world',{shift:shift});broadcast('action',{id:me.id,name:me.name,text:'started the shared night shift.'});track();render();say('SYSTEM: Shared shift started. Assign camera and door duty.');
+}
+function interact(kind){
+ var lines={camera:'is monitoring the security cameras.',maintenance:'is checking the generator.', 'door-west':'closed the west security door.','door-east':'closed the east security door.'};
+ if(kind==='door-west')shift.west=!shift.west;if(kind==='door-east')shift.east=!shift.east;
+ if(kind==='camera')me.role='Camera Operator';if(kind==='maintenance')me.role='Maintenance';
+ if(demo){if(kind==='maintenance')shift.power=Math.min(100,shift.power+8);else if(kind.indexOf('door')===0)shift.power=Math.max(0,shift.power-2);render();say(me.name+' '+lines[kind]);return}
+ track();broadcast('action',{id:me.id,name:me.name,text:lines[kind]||'used a console.'});broadcast('world',{shift:shift});render();
+}
+function sendChat(){var text=el('chatInput').value.trim();if(!text)return;if(text.length>180)return; say(me.name+': '+text);broadcast('chat',{id:me.id,name:me.name,text:text});el('chatInput').value=''}
+el('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendChat()});
+document.addEventListener('keydown',function(e){if(!el('game').classList.contains('hidden')&&!/INPUT/.test(e.target.tagName)){var r={w:'stage',a:'west',s:'dining',d:'east'}[e.key.toLowerCase()];if(r)moveRoom(r)}});
+(function restore(){try{el('nickname').value=localStorage.getItem('wallings_nickname')||'';el('projectUrl').value=localStorage.getItem('wallings_supabase_url')||'';el('anonKey').value=localStorage.getItem('wallings_supabase_key')||''}catch(e){}})();
+</script>
+</body></html>
