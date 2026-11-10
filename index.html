@@ -20,6 +20,7 @@ body{min-height:100%;display:flex;justify-content:center}
 #desk{align-self:end;text-align:center;padding-bottom:6px}
 #desk h1{font-size:clamp(14px,3.2vw,26px);margin:0 0 6px;letter-spacing:.04em;color:#e8dcc0}
 #desk p{margin:0;color:var(--dim);font-size:12px;line-height:1.5}#alert{min-height:28px;margin:8px auto 0;padding:6px 8px;max-width:230px;border:1px solid #303746;background:#080a0e;color:#aeb8c8;font-size:11px;line-height:1.35;letter-spacing:.02em}#alert.warn{border-color:#8c6a32;color:#f0cf8a;text-shadow:0 0 8px #8c6a3244}#alert.danger{border-color:#9d3838;color:#ffaaa3;text-shadow:0 0 8px #9d383844}
+ .march-panel{display:none;position:absolute;top:0;bottom:0;width:15%;z-index:2;background:repeating-linear-gradient(90deg,#1b1c22 0 9px,#70502c 10px 12px);border:3px solid #c49a52;box-shadow:0 0 22px #d5a64b66;text-align:center;align-items:center;justify-content:center;flex-direction:column;color:#f5dca1;gap:8px}.march-panel.active{display:flex;animation:bandGlow 2s infinite}.march-panel.left{left:0}.march-panel.right{right:0}.march-mask{width:clamp(40px,7vw,76px);height:clamp(40px,7vw,76px);border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#d8b28a,#39251e 70%);border:4px double #e5c17c;color:#170f0b;font:bold 30px Georgia}.march-mask.wen{background:radial-gradient(circle at 35% 25%,#ddd,#3c414d 70%)}.march-panel b{font-size:clamp(8px,1.2vw,12px);writing-mode:vertical-rl;letter-spacing:.15em}#band-game{display:none;position:absolute;z-index:4;left:17%;right:17%;bottom:8px;padding:8px;background:#090b10ed;border:1px solid #c59a4d;text-align:center;box-shadow:0 0 18px #000}#band-game small{display:block;color:#d7b56f;font-size:10px}#band-call{display:block;color:#fff0c3;margin:4px;font-size:14px}#band-time{font-size:11px;color:#ffcf70}.band-buttons{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}.band-buttons button{padding:6px 8px;font-size:10px;border-color:#8a6b37}@keyframes bandGlow{50%{filter:brightness(1.4)}}
 #ctrl{display:grid;grid-template-columns:1fr 1fr 1.3fr 1fr 1fr;gap:6px;padding:8px;background:#0b0d12;border-top:1px solid #1d222c;z-index:3}
 button{font:inherit;background:var(--panel);color:var(--ink);border:2px solid #2a3140;border-radius:6px;padding:12px 4px;cursor:pointer;touch-action:manipulation}
 button:active{transform:translateY(1px)}
@@ -198,7 +199,7 @@ function nm(n){return {chica:"Mrs Walling",golden:"Golden Freddy"}[n]||n[0].toUp
 var COL={golden:"#e8b923",bonnie:"#8e4fd0",chica:"#f2c230",freddy:"#a8703a",foxy:"#d6372b"};
 var AI={bonnie:[3,5,7,10,13],chica:[3,5,8,10,13],freddy:[2,4,6,9,12],foxy:[3,5,7,10,13]};
 var CAMS=["","Show Stage","West Hall","East Hall","Pirate Cove","Supply Closet","Backstage","Kitchen"];
-var S=null,best=1;
+var S=null,best=1; var DLC_KEY='fn_football_dlc_owned'; var BAND=[['SNARE','J',190],['TRUMPET','K',520],['FLUTE','L',880],['CYMBALS',';',1250]];
 try{best=+localStorage.getItem("fn_best")||1}catch(e){}
 function $(i){return document.getElementById(i)}
 function face(n,s,tag){return '<div class="wrap" style="padding:0;--s:'+s+'px"><div class="face '+n+'" style="--s:'+s+'px;--c:'+COL[n]+'"><div class="ph"><img src="'+IMG[n]+'" alt="'+n+'"><i class="e1"></i><i class="e2"></i></div>'+(n=="foxy"?'<b class="patch"></b>':'')+((n=="freddy"||n=="golden")?'<b class="hat"></b>':'')+'<s class="bd"></s></div>'+(tag?'<span class="tag" style="--c:'+COL[n]+'">'+nm(n)+'</span>':'')+'</div>'}
@@ -253,16 +254,20 @@ function startTitleFeed(){
  }
  titleRAF=requestAnimationFrame(frame);
 }
+function dlcOwned(){try{return localStorage.getItem(DLC_KEY)==='1'}catch(e){return false}}
+function footballStore(){menu('<h2>FRIDAY NIGHT LIGHTS</h2><p>Extra football-game night: Mrs. Moses watches from the marching-show side panels. Play random instrument cues for Mr. Moses and Mrs. Wen while all the regular animatronics remain active.</p><p><b>Demo checkout:</b> This game has no payment processor. Unlocking below is free and does not charge you.</p><div class="row"><button class="big" onclick="unlockFootballDemo()">Unlock DLC demo — no charge</button><button onclick="home()">Back</button></div>')}
+function unlockFootballDemo(){try{localStorage.setItem(DLC_KEY,'1')}catch(e){}startFootballNight()}
+function startFootballNight(){if(!dlcOwned()){footballStore();return}start(6)}
 function home(){
  stopTitleFeed();
- var nb="";for(var i=1;i<=5;i++)nb+='<button '+(i>best?"disabled":"")+' onclick="start('+i+')">Night '+i+'</button>';
+ var nb="";for(var i=1;i<=5;i++)nb+='<button '+(i>best?"disabled":"")+' onclick="start('+i+')">Night '+i+'</button>'; nb+=dlcOwned()?'<button class="big" onclick="startFootballNight()">Football Game Night — PLAY</button>':'<button class="big" onclick="footballStore()">Football Game Night — DLC</button>';
  menu('<section class="title-brand"><div class="eyebrow">FAZBEAR ENTERTAINMENT PRESENTS</div><h2>FIVE NIGHTS<span>AT WALLINGS</span></h2><div class="subtitle">FAN EDITION · SECURITY LOG 01</div><div class="title-actions">'+nb+'<button onclick="arc()">Arcade minigames</button></div></section><div class="title-feed"><span class="feed-label">LIVE FEED / 01</span><span class="feed-rec">REC</span><canvas id="title-feed" width="480" height="360" aria-label="Glitching security-camera footage of an animatronic in a dark hallway"></canvas><div class="title-static"></div></div><div class="title-foot"><span>USE HEADPHONES FOR THE BEST EXPERIENCE</span><strong>PLEASE REMAIN ON THE PREMISES</strong></div>');
  $("menu").classList.add("title-screen");startTitleFeed();
 }
 function start(n){
  stopTitleFeed();$("menu").classList.remove("title-screen");ac();
- S={n:n,t:0,paused:0,pw:100,lure:0,lr:0,lcd:0,gold:0,gw:0,gt:0,gcd:0,seen:{},dL:0,dR:0,lL:0,lR:0,cam:0,sel:1,p:{bonnie:0,chica:0,freddy:0,foxy:0},tm:{bonnie:0,chica:0,freddy:0,foxy:0},fr:0,hits:0,out:0,outT:0,notice:"SYSTEM READY — listen for movement.",noticeT:0,pw25:0,pw10:0,warned:{},run:1};
- menu('<h2>Night '+n+'</h2><p>12:00 AM</p><p style="max-width:420px;font-size:12px">Skill tip: keep the camera on an animatronic\'s current feed to interrupt its advance. Track threats, time your doors, and conserve power.</p>');S.run=0;setTimeout(function(){if(S&&S.n==n){$("menu").style.display="none";S.run=1}},1800);$("scare").className="";$("pst").innerHTML=["bonnie","chica","freddy","foxy","golden"].map(function(n){return face(n,34)}).join("");$("nt").textContent="Night "+n;buildCams();render();
+ S={n:n,t:0,paused:0,football:n===6,bandCue:-1,bandTime:0,bandScore:0,pw:100,lure:0,lr:0,lcd:0,gold:0,gw:0,gt:0,gcd:0,seen:{},dL:0,dR:0,lL:0,lR:0,cam:0,sel:1,p:{bonnie:0,chica:0,freddy:0,foxy:0},tm:{bonnie:0,chica:0,freddy:0,foxy:0},fr:0,hits:0,out:0,outT:0,notice:"SYSTEM READY — listen for movement.",noticeT:0,pw25:0,pw10:0,warned:{},run:1};
+ menu(n===6?'<h2>FRIDAY NIGHT LIGHTS</h2><p>12:00 AM — FOOTBALL GAME NIGHT</p><p>Mrs. Moses is waiting in the sideline panels. Play every instrument cue on time.</p>':'<h2>Night '+n+'</h2><p>12:00 AM</p><p style="max-width:420px;font-size:12px">Skill tip: keep the camera on an animatronic\'s current feed to interrupt its advance. Track threats, time your doors, and conserve power.</p>'); if(n===6)setupBandPanels();S.run=0;setTimeout(function(){if(S&&S.n==n){$("menu").style.display="none";S.run=1}},1800);$("scare").className="";$("pst").innerHTML=["bonnie","chica","freddy","foxy","golden"].map(function(n){return face(n,34)}).join("");$("nt").textContent="Night "+n;buildCams();render();
 }
 function togglePause(){if(!S||!S.run||S.out)return;if(!S.paused){S.paused=1;menu('<h2>SHIFT PAUSED</h2><p>The clock and animatronic movement are frozen.</p><div class="row"><button class="big" onclick="resumeShift()">Resume shift</button><button onclick="start('+S.n+')">Restart night</button><button onclick="home()">Main menu</button></div>');}else resumeShift();}
 function resumeShift(){if(!S||!S.run)return;S.paused=0;$('menu').style.display='none';render();}
@@ -276,7 +281,7 @@ function screech(f){var a=ac();if(!a)return;var t=a.currentTime;[1,1.5,2.02].for
 function scare(n){
  if(!S.run)return;S.run=0;S.cam=0;screech({bonnie:150,chica:210,freddy:95,foxy:280,golden:60}[n]||120);
  var sc=$("scare");sc.innerHTML=face(n,Math.min(innerWidth,innerHeight)*.8|0,0);sc.querySelector(".face").insertAdjacentHTML("beforeend",'<u class="mo"></u>');sc.className="show";
- setTimeout(function(){sc.className="";if(n==="chica"){chicaEssay();return}menu('<h2>'+nm(n)+' got you</h2><p>Night '+S.n+' ended at '+hourStr()+'.</p><div class="row"><button class="big" onclick="start('+S.n+')">Retry night '+S.n+'</button><button onclick="home()">Main menu</button></div>')},2300);
+ setTimeout(function(){sc.className="";hideBandPanels();if(n==="chica"){chicaEssay();return}menu('<h2>'+(n==='moses'?'THE BAND WENT SILENT — MR. MOSES & MRS. WEN GOT YOU':nm(n)+' got you')+'</h2><p>Night '+S.n+' ended at '+hourStr()+'.</p><div class="row"><button class="big" onclick="start('+S.n+')">Retry night '+S.n+'</button><button onclick="home()">Main menu</button></div>')},2300);
 }
 function chicaEssay(){
  menu(`<h2 style="color:#e5c46c">CHICA HAS ASSIGNED YOU AN ESSAY.</h2><p>You were caught. Academic consequences are now in effect.</p><p><strong>Prompt:</strong> Write a literary analysis of John Knowles' <em>A Separate Peace</em>. Analyze how Gene Forrester's jealousy and guilt shape his friendship with Phineas, explain how the novel explores the loss of innocence during wartime, and support your interpretation with specific moments from the book. Do not just summarize the plot: explain what the events reveal about the characters and the novel's themes.</p><p>Minimum: <strong>300 words.</strong> No escaping the assignment. Your essay stays in this game session only.</p><div class="essay-box"><label for="chica-essay">YOUR RESPONSE</label><textarea id="chica-essay" placeholder="Introduction, evidence, analysis, conclusion..." oninput="essayCount()"></textarea><div class="essay-counter"><span id="essay-count">0 / 300 words</span><span>CHICA'S GRADING RUBRIC: UNFORGIVING</span></div><div id="essay-warning" class="essay-warning">Write at least 300 words to unlock the submit button.</div><button id="essay-submit" class="essay-submit" disabled onclick="submitChicaEssay()">Submit essay</button></div>`);
@@ -297,7 +302,7 @@ function submitChicaEssay(){
 function hr(){return Math.floor(S.t/40)}
 function hourStr(){var h=hr();return (h==0?12:h)+" AM"}
 function win(){
- S.run=0;beep(880,.6,"sine",.1);
+ S.run=0;hideBandPanels();beep(880,.6,"sine",.1);
  var grade=S.pw>=60&&S.hits===0?"S":S.pw>=40&&S.hits<=1?"A":S.pw>=20&&S.hits<=2?"B":S.pw>=10?"C":"D";
  if(S.n>=best&&S.n<5){best=S.n+1;try{localStorage.setItem("fn_best",best)}catch(e){}}
  var last=S.n>=5;
@@ -307,7 +312,7 @@ function powerOut(){S.out=1;S.gold=0;S.outT=9;S.dL=S.dR=S.lL=S.lR=S.cam=0;S.pw=0
 function tick(){
  if(!S||!S.run||S.paused)return;
  S.t++;if(hr()>=6){win();return}
- var n=S.n,i=n-1,p=S.p,tm=S.tm;
+ var n=S.n,i=Math.min(n-1,4),p=S.p,tm=S.tm; if(S.football&&bandTick())return;
  if(S.noticeT>0){S.noticeT--;if(S.noticeT===0)S.notice="SYSTEM READY — listen for movement."}
  if(S.out){S.outT--;if(S.outT<=0){scare("freddy");return}render();return}
  S.pw-=usage()*0.1*(1+i*.12);
@@ -348,6 +353,11 @@ function inCam(c){
  if(c==5&&S.gw>0)r.push("golden");
  return r;
 }
+function setupBandPanels(){var o=$('office');if(!$('moses-left'))o.insertAdjacentHTML('beforeend','<div class="march-panel left" id="moses-left"><div class="march-mask">M</div><b>MRS. MOSES</b><small>SIDELINE</small></div><div class="march-panel right" id="moses-right"><div class="march-mask wen">W</div><b>MRS. WEN</b><small>SIDELINE</small></div><div id="band-game"><small>HALFTIME BAND / <span id="band-score">0</span> CORRECT</small><strong id="band-call">WAIT FOR THE FIRST CUE</strong><div id="band-time">READY</div><div class="band-buttons"><button onclick="bandPlay(0)">J · SNARE</button><button onclick="bandPlay(1)">K · TRUMPET</button><button onclick="bandPlay(2)">L · FLUTE</button><button onclick="bandPlay(3)">; · CYMBALS</button></div></div>');['moses-left','moses-right'].forEach(function(id){$(id).classList.add('active')});$('band-game').style.display='block';}
+function bandNext(){var i=Math.floor(Math.random()*4);S.bandCue=i;S.bandTime=3;$('band-call').textContent=BAND[i][0]+'  —  PRESS '+BAND[i][1];$('band-time').textContent='3';}
+function bandTick(){if(S.bandCue>=0){S.bandTime--;if($('band-time'))$('band-time').textContent=S.bandTime+'s';if(S.bandTime<=0){scare('moses');return true}}else if(S.t%5===0)bandNext();return false;}
+function bandPlay(i){if(!S||!S.run||!S.football||S.paused||S.bandCue<0)return;if(i!==S.bandCue){scare('moses');return}beep(BAND[i][2],.2,'triangle',.12);S.bandScore++;S.bandCue=-1;$('band-score').textContent=S.bandScore;$('band-call').textContent='GOOD — NEXT CUE';$('band-time').textContent='';}
+function hideBandPanels(){['moses-left','moses-right','band-game'].forEach(function(id){if($(id))$(id).style.display='none'})}
 function render(){
  if(!S)return;
  var h=hr();$("tm").textContent=(h==0?12:h)+" AM";
@@ -388,7 +398,7 @@ addEventListener("keydown",function(e){
  if(k=="a")tog("dL");else if(k=="d")tog("dR");
  else if(k=="q"){tog("lL");if(S&&S.lL){S.lR=0;render()}}
  else if(k=="e"){tog("lR");if(S&&S.lR){S.lL=0;render()}}
- else if(k==" "){e.preventDefault();camT()}else if(k=="l")doLure();else if(k=="p"||k=="escape"){e.preventDefault();togglePause();}
+ else if(k==" "){e.preventDefault();camT()}else if(k=="j"&&S&&S.football)bandPlay(0);else if(k=="k"&&S&&S.football)bandPlay(1);else if(k=="l"&&S&&S.football)bandPlay(2);else if(k==";"&&S&&S.football)bandPlay(3);else if(k=="l")doLure();else if(k=="p"||k=="escape"){e.preventDefault();togglePause();}
  else if("1234567".indexOf(k)>=0&&k)pick(+k);
 });
 var AR=0,ST=null,IM={},GN=['Foxy Run','Cupcake Catch','Whack-a-Face'];for(var kk in IMG){IM[kk]=new Image();IM[kk].src=IMG[kk]}
