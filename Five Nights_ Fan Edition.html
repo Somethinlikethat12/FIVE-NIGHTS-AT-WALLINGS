@@ -260,7 +260,7 @@ function unlockFootballDemo(){try{localStorage.setItem(DLC_KEY,'1')}catch(e){}st
 function startFootballNight(){if(!dlcOwned()){footballStore();return}start(6)}
 function home(){
  stopTitleFeed();
- var nb="";for(var i=1;i<=5;i++)nb+='<button '+(i>best?"disabled":"")+' onclick="start('+i+')">Night '+i+'</button>'; nb+=dlcOwned()?'<button class="big" onclick="startFootballNight()">Football Game Night — PLAY</button>':'<button class="big" onclick="footballStore()">Football Game Night — DLC</button>';
+ var nb="";for(var i=1;i<=5;i++)nb+='<button '+(i>best?"disabled":"")+' onclick="start('+i+')">Night '+i+'</button>'; nb+='<button onclick="location.href=\'online.html\'">Online multiplayer</button>';nb+=dlcOwned()?'<button class="big" onclick="startFootballNight()">Football Game Night — PLAY</button>':'<button class="big" onclick="footballStore()">Football Game Night — DLC</button>';
  menu('<section class="title-brand"><div class="eyebrow">FAZBEAR ENTERTAINMENT PRESENTS</div><h2>FIVE NIGHTS<span>AT WALLINGS</span></h2><div class="subtitle">FAN EDITION · SECURITY LOG 01</div><div class="title-actions">'+nb+'<button onclick="arc()">Arcade minigames</button></div></section><div class="title-feed"><span class="feed-label">LIVE FEED / 01</span><span class="feed-rec">REC</span><canvas id="title-feed" width="480" height="360" aria-label="Glitching security-camera footage of an animatronic in a dark hallway"></canvas><div class="title-static"></div></div><div class="title-foot"><span>USE HEADPHONES FOR THE BEST EXPERIENCE</span><strong>PLEASE REMAIN ON THE PREMISES</strong></div>');
  $("menu").classList.add("title-screen");startTitleFeed();
 }
