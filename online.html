@@ -74,23 +74,29 @@ function moveRoom(room){if(!ROOMS[room])return;me.room=room;track();render();if(
 function render(){
  Object.keys(ROOMS).forEach(function(r){var box=el('avatars-'+r);box.innerHTML='';Object.keys(players).forEach(function(id){var p=players[id];if(p.room===r){var tag=document.createElement('span');tag.className='avatar'+(id===me.id?' me':'');tag.textContent=p.name+(p.role==='Shift Lead'?' ★':'');box.appendChild(tag)}});var zone=document.querySelector('[data-room="'+r+'"]');zone.classList.toggle('selected',me.room===r)});
  el('currentRoom').textContent=ROOMS[me.room];el('players').innerHTML='';var count=Object.keys(players).length;el('playerCount').textContent='('+count+')';Object.keys(players).forEach(function(id){var p=players[id],d=document.createElement('div');d.className='player';var n=document.createElement('span');n.textContent=p.name;var role=document.createElement('span');role.className='role';role.textContent=p.role||'Visitor';d.append(n,role);el('players').appendChild(d)});
- el('shiftState').textContent=shift.active?'NIGHT SHIFT ACTIVE · '+shift.hour+':00 AM':'No active shift';el('powerBar').style.width=shift.power+'%';el('powerLabel').textContent='Building power: '+Math.round(shift.power)+'%';el('threat').textContent='THREAT LEVEL: '+shift.threat;el('roomHint').textContent=shift.active?'Stay together. Assign someone to cameras and keep power under control.':'You are off shift. Look around.';
+ el('shiftState').textContent=shift.active?'NIGHT SHIFT ACTIVE · '+shift.hour+':00 AM':'No active shift';el('powerBar').style.width=shift.power+'%';el('powerLabel').textContent='Building power: '+Math.round(shift.power)+'%';el('threat').textContent=shift.active?'THREAT: '+shift.threat+' · '+(ROOMS[shift.enemyRoom]||'UNKNOWN'):'THREAT LEVEL: QUIET';el('roomHint').textContent=shift.active?'Stay together. Assign someone to cameras and keep power under control.':'You are off shift. Look around.';
 }
 function applyWorld(w){if(!w)return;if(w.shift)shift=w.shift;if(w.players){players=w.players}render()}
 function startSharedShift(){
  if(shift.active){say('A night shift is already running.');return}
- me.role='Shift Lead';shift={active:true,hour:12,power:100,west:false,east:false,threat:'LOW',lead:me.id};players[me.id]=me;broadcast('world',{shift:shift});broadcast('action',{id:me.id,name:me.name,text:'started the shared night shift.'});track();render();say('SYSTEM: Shared shift started. Assign camera and door duty.');
+ me.role='Shift Lead';shift={active:true,hour:12,power:100,west:false,east:false,threat:'LOW',lead:me.id,enemyRoom:'stage',enemyName:'MR. Snowden',steps:0};players[me.id]=me;broadcast('world',{shift:shift});broadcast('action',{id:me.id,name:me.name,text:'started the shared night shift.'});track();render();say('SYSTEM: Shared shift started. The animatronic is somewhere on the floor.');
 }
 function interact(kind){
  var lines={camera:'is monitoring the security cameras.',maintenance:'is checking the generator.', 'door-west':'closed the west security door.','door-east':'closed the east security door.'};
  if(kind==='door-west')shift.west=!shift.west;if(kind==='door-east')shift.east=!shift.east;
- if(kind==='camera')me.role='Camera Operator';if(kind==='maintenance')me.role='Maintenance';
+ if(kind==='camera')me.role='Camera Operator';if(kind==='maintenance'){me.role='Maintenance';if(shift.active)shift.power=Math.min(100,shift.power+5)}
  if(demo){if(kind==='maintenance')shift.power=Math.min(100,shift.power+8);else if(kind.indexOf('door')===0)shift.power=Math.max(0,shift.power-2);render();say(me.name+' '+lines[kind]);return}
  track();broadcast('action',{id:me.id,name:me.name,text:lines[kind]||'used a console.'});broadcast('world',{shift:shift});render();
 }
 function sendChat(){var text=el('chatInput').value.trim();if(!text)return;if(text.length>180)return; say(me.name+': '+text);broadcast('chat',{id:me.id,name:me.name,text:text});el('chatInput').value=''}
 el('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendChat()});
 document.addEventListener('keydown',function(e){if(!el('game').classList.contains('hidden')&&!/INPUT/.test(e.target.tagName)){var r={w:'stage',a:'west',s:'dining',d:'east'}[e.key.toLowerCase()];if(r)moveRoom(r)}});
+function shiftStep(){if(!shift.active)return;if(!demo&&shift.lead!==me.id)return;shift.steps=(shift.steps||0)+1;shift.power=Math.max(0,shift.power-(shift.west?.55:.35)-(shift.east?.55:0));if(shift.steps%2===0){var route=['stage','dining','west','east','office'];shift.enemyRoom=route[Math.floor(Math.random()*route.length)];shift.threat=shift.enemyRoom==='office'?'CRITICAL':shift.enemyRoom==='west'||shift.enemyRoom==='east'?'HIGH':'MODERATE';}
+ if((shift.enemyRoom==='west'&&shift.west)||(shift.enemyRoom==='east'&&shift.east)){shift.enemyRoom='stage';shift.power=Math.max(0,shift.power-2);shift.threat='LOW';say('SYSTEM: A door stopped an attack. Power surge detected.');}
+ if(shift.enemyRoom==='office'||shift.power<=0){shift.active=false;shift.threat='SHIFT LOST';say('SYSTEM: The night shift has ended. '+(shift.power<=0?'Building power exhausted.':'An animatronic reached the security office.'));}
+ else if(shift.steps>=72){shift.active=false;shift.hour=6;shift.threat='CLEARED';say('SYSTEM: 6 AM. The team survived the shift!');}
+ broadcast('world',{shift:shift});render();}
+setInterval(shiftStep,5000);
 (function restore(){try{el('nickname').value=localStorage.getItem('wallings_nickname')||'';el('projectUrl').value=localStorage.getItem('wallings_supabase_url')||'';el('anonKey').value=localStorage.getItem('wallings_supabase_key')||''}catch(e){}})();
 </script>
 </body></html>
