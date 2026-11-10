@@ -12,13 +12,13 @@
 <div class="shell">
 <header class="top"><div><div class="eyebrow">FAZBEAR ENTERTAINMENT // NETWORK DIVISION</div><h1>FIVE NIGHTS <span style="color:#a83232">ONLINE</span></h1><div class="status" id="connection">OFFLINE MODE · configure a shared world to play together</div></div><button onclick="location.href='index.html'">← Main game</button></header>
 <section id="setup" class="panel setup">
- <div class="eyebrow">PERSISTENT WORLD // BUILD 0.1</div><h2>Enter the pizzeria</h2>
- <p>This is the multiplayer world companion to the original night-shift game. Explore the building with other guards, chat, take jobs, and launch shared survival shifts. A free Supabase project provides the realtime connection; no game server or local computer setup is required.</p>
+ <div class="eyebrow">ONLINE WORLD PROTOTYPE // BUILD 0.1</div><h2>Enter the pizzeria</h2>
+ <p>This is the multiplayer-world prototype for the original night-shift game. Explore the building with other guards, chat, take jobs, and launch shared survival shifts. A free Supabase project provides the realtime connection; no local computer setup is required. This first milestone is a shared lobby and cooperative shift simulation, not yet a fully persistent MMO.</p>
  <div class="field"><label>YOUR GUARD NAME</label><input id="nickname" maxlength="18" placeholder="e.g. NightWatch"></div>
  <div class="field"><label>SUPABASE PROJECT URL</label><input id="projectUrl" placeholder="https://your-project.supabase.co"></div>
  <div class="field"><label>SUPABASE PUBLIC ANON KEY</label><input id="anonKey" placeholder="Paste the public anon key"></div>
  <div class="actions"><button class="primary" onclick="connectWorld()">CONNECT TO PUBLIC WORLD</button><button onclick="tryDemo()">TRY SOLO DEMO</button></div>
- <p class="footnote">Connection setup is a one-time step per browser. Use only the project's public anon key—never a service-role or secret key. The included SQL setup file creates the minimal public profile and persistence tables. This first build uses Supabase Realtime presence/broadcast for live sessions.</p>
+ <p class="footnote">Connection setup is a one-time step per browser. Use only the project's public anon key—never a service-role or secret key. This build uses Supabase Realtime presence/broadcast for live sessions. The included SQL schema is groundwork for future account profiles and saved progression; those features are not wired up yet.</p>
  <div id="setupError" class="danger"></div>
 </section>
 <main id="game" class="hidden">
